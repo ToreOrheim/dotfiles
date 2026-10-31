@@ -131,3 +131,14 @@ end, {})
 vim.keymap.set("n", "<leader>rp", function()
     dotnet.run_project()
 end)
+
+local auto_solution = require("dotnet-auto-solution")
+require("easy-dotnet.current_solution").max_depth = 5
+vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged" }, {
+    desc = "auto-select dotnet solution",
+    group = vim.api.nvim_create_augroup("DotnetAutoSolution", { clear = true }),
+    callback = function(args)
+        if args.event == "DirChanged" and args.data.scope ~= "global" then return end
+        vim.schedule(auto_solution.auto_select)
+    end,
+})
